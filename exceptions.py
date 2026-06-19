@@ -17,3 +17,23 @@ class JWTError(WeatherAPIError):
 class InvalidTokenError(JWTError):
     """Invalid or expired Token"""
     pass
+
+class UserAlreadyExistError(WeatherAPIError):
+    "User Already Exist"
+    pass
+
+class InvalidPasswordError(WeatherAPIError):
+    "Invalid Password"
+    pass
+
+class UserNotExistError(WeatherAPIError):
+    """User doesn't exist"""
+    pass
+
+class EmailNotFoundError(WeatherAPIError):
+    "User doesn't exist"
+    pass
+
+class CityNotInFavoritesError(WeatherAPIError):
+    "No Favorite City yet"
+    pass
