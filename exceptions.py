@@ -10,11 +10,11 @@ class WeatherProviderError(WeatherAPIError):
     """Exception raised when OpenWeatherMap returns an unexpected error (bad key, server issue, etc.)."""
     pass
 
-class JWTError(WeatherAPIError):
+class JWTCustomError(WeatherAPIError):
     """JWT ERROR ON VERIFICATION FAILURE"""
     pass
 
-class InvalidTokenError(JWTError):
+class InvalidTokenError(JWTCustomError):
     """Invalid or expired Token"""
     pass
 

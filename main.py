@@ -2,12 +2,15 @@ import logging
 import os
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi import Depends, Header
 from jwt_handler import verify_token
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from auth import register_user, login_user
 from weather_client import get_current_weather, get_forecast
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from favorite_cities import add_favorite, get_favorites, remove_favorite
 from exceptions import (
     WeatherAPIError,
@@ -35,6 +38,12 @@ app = FastAPI(title="Weather API", version="1.0.0")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 create_tables()
+app.mount("/static", StaticFiles(directory="."), name="static")
+
+
+@app.get("/app", tags=["Frontend"])
+def frontend():
+    return FileResponse("nimbus.html")
 
 @app.get("/", tags=["Health"])
 def home():
@@ -57,11 +66,12 @@ def register(request: RegisterRequest):
         raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
 
-def get_current_user_id(authorization: str = Header(...)) -> str:
+security = HTTPBearer()
+
+def get_current_user_id(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     """Extract and verify the JWT from the Authorization header, return the user_id."""
-    # authorization will look like: "Bearer eyJhbGc..."
     try:
-        token = authorization.replace("Bearer ", "")
+        token = credentials.credentials  # already stripped of "Bearer " automatically
         payload = verify_token(token)
         return payload["user_id"]
     except InvalidTokenError as e:
