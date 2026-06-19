@@ -1,6 +1,6 @@
 from jose import jwt
 from datetime import datetime, timedelta, timezone
-from exceptions import JWTError, InvalidTokenError
+from exceptions import JWTCustomError, InvalidTokenError
 import os
 from dotenv import load_dotenv
 
@@ -20,5 +20,5 @@ def verify_token(token: str) -> dict:
     """Decode and verify a JWT. Raises an exception if invalid or expired."""
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
+    except JWTCustomError:
         raise InvalidTokenError("invalid or expired token")
