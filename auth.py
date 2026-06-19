@@ -38,5 +38,5 @@ def login_user(email: str, password: str):
     if not verify_password(password, user['password']):
         raise InvalidPasswordError("Invalid password or email.")
     token = create_token({"user_id": user["user_id"]})
-    safe_dict = user.pop("password")
+    user.pop("password")
     return {"token": token, "user": user}
